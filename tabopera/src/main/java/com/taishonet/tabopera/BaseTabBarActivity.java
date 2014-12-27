@@ -19,8 +19,7 @@ import java.util.Stack;
 public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTabChangeListener {
 
     private ArrayList<String> mTabTagList = new ArrayList<>();
-    private ArrayList<Integer> mTabButtonResourceList = new ArrayList<>();
-    private ArrayList<Integer> mTabLabelResourceList = new ArrayList<>();
+    private ArrayList<View> mTabContentList = new ArrayList<>();
     private ArrayList<Class> mFragmentList = new ArrayList<>();
 
     private FragmentManager mFragmentManager;
@@ -28,7 +27,6 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
 
     //The Tab which selected in last.
     private View mlastTabView = null;
-    private int mTabMenuLayoutId = R.layout.menu_tab_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +38,6 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
     public void onTabChanged(String tabId) {
         //タブメニューラベルの色を変更
         View view = mTabHost.getCurrentTabView();
-        setTabLabelColor(mlastTabView, getResources().getColor(R.color.white));
-        setTabLabelColor(view, getResources().getColor(R.color.blue));
         mlastTabView = view;
     }
 
@@ -62,15 +58,10 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
         Stack<Fragment> stack = mTabHost.getCurrentTabStack();
 
         if (!stack.isEmpty()) {
-
-            if (stack.size() == 1) {
-                return true;
-            } else {
-                Fragment lastFragment = stack.pop();
-                FragmentTransaction ft = mFragmentManager.beginTransaction();
-                ft.setCustomAnimations(R.anim.fragment_push_animation, R.anim.fragment_pop_animation);
-                ft.remove(lastFragment).commit();
-            }
+            Fragment lastFragment = stack.pop();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.setCustomAnimations(R.anim.fragment_push_animation, R.anim.fragment_pop_animation);
+            ft.remove(lastFragment).commit();
             Fragment newFragment = stack.peek();
             mFragmentManager.beginTransaction().attach(newFragment).commit();
             return true;
@@ -82,16 +73,10 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
         initTabHost();
     }
 
-    public void addTab(String tag, int buttonImageId, int labelId, Class<Fragment> fragment) {
+    public void addTab(String tag, View tabMenuContent, Class<Fragment> fragment) {
         mTabTagList.add(tag);
-        mTabButtonResourceList.add(buttonImageId);
-        mTabLabelResourceList.add(labelId);
+        mTabContentList.add(tabMenuContent);
         mFragmentList.add(fragment);
-    }
-
-    //Set Each Tab Content Layout Id
-    public void setMenuTabLayout(int layoutId) {
-        mTabMenuLayoutId = layoutId;
     }
 
     //Set Animation which is going to play when Fragment will start and end.
@@ -115,11 +100,6 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
         return mTabHost.getCurrentTabStack();
     }
 
-    private void setTabLabelColor(View content, int color) {
-        TextView label = (TextView) content.findViewById(R.id.tab_label);
-        label.setTextColor(color);
-    }
-
     private void initTabHost() {
         mTabHost = new FragmentStackTabHost(this);
         View layoutw = getLayoutInflater().inflate(R.layout.activity_main_menu, null);
@@ -128,16 +108,11 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
 
         for (int i = 0; i < mFragmentList.size(); i++) {
             TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTabTagList.get(i));
-            View layout = getLayoutInflater().inflate(mTabMenuLayoutId, null);
-            ImageView icon = (ImageView) layout.findViewById(R.id.tab_icon);
-            TextView label = (TextView) layout.findViewById(R.id.tab_label);
-            icon.setImageResource(mTabButtonResourceList.get(i));
-            label.setText(mTabLabelResourceList.get(i));
+            View layout = mTabContentList.get(i);
             tabSpec.setIndicator(layout);
             mTabHost.addTab(tabSpec, mFragmentList.get(i), new Bundle());
         }
         mlastTabView = mTabHost.getCurrentTabView();
-        setTabLabelColor(mlastTabView, getResources().getColor(R.color.blue));
         mTabHost.setOnTabChangedListener(this);
         setContentView(mTabHost);
     }

@@ -42,15 +42,15 @@ public class MainActivity extends BaseTabBarActivity {
 
         Button tab = new Button(this);
         tab.setText("tab1");
-        addTab("tag", tab, Fragment.class);
+        addTab("tag1", tab, Fragment.class);
 
         tab = new Button(this);
         tab.setText("tab2");
-        addTab("tag", tab, Fragment.class);
+        addTab("tag2", tab, Fragment.class);
 
         tab = new Button(this);
         tab.setText("tab3");
-        addTab("tag", tab, Fragment.class);
+        addTab("tag3", tab, Fragment.class);
 
         showTabBar();
     }

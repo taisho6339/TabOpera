@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
+
+import com.taishonet.tabopera.FragmentStackTabHost;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -58,10 +61,16 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
         Stack<Fragment> stack = mTabHost.getCurrentTabStack();
 
         if (!stack.isEmpty()) {
-            Fragment lastFragment = stack.pop();
-            FragmentTransaction ft = mFragmentManager.beginTransaction();
-            ft.setCustomAnimations(R.anim.fragment_push_animation, R.anim.fragment_pop_animation);
-            ft.remove(lastFragment).commit();
+
+            if (stack.size() == 1) {
+                finish();
+                return true;
+            } else {
+                Fragment lastFragment = stack.pop();
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                ft.setCustomAnimations(R.anim.fragment_push_animation, R.anim.fragment_pop_animation);
+                ft.remove(lastFragment).commit();
+            }
             Fragment newFragment = stack.peek();
             mFragmentManager.beginTransaction().attach(newFragment).commit();
             return true;
@@ -71,6 +80,11 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
 
     public void showTabBar() {
         initTabHost();
+    }
+
+    public void setTabBackgroundResource(int id) {
+        TabWidget widget = (TabWidget) findViewById(android.R.id.tabs);
+        widget.setBackgroundResource(id);
     }
 
     public void addTab(String tag, View tabMenuContent, Class<Fragment> fragment) {

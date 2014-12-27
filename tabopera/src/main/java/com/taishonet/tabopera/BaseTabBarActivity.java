@@ -28,6 +28,8 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
     private FragmentManager mFragmentManager;
     private FragmentStackTabHost mTabHost;
 
+    private int mBackgroundResId = R.color.black;
+
     //The Tab which selected in last.
     private View mlastTabView = null;
 
@@ -83,8 +85,12 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
     }
 
     public void setTabBackgroundResource(int id) {
+        mBackgroundResId = id;
         TabWidget widget = (TabWidget) findViewById(android.R.id.tabs);
-        widget.setBackgroundResource(id);
+        if (widget == null) {
+            return;
+        }
+        widget.setBackgroundResource(mBackgroundResId);
     }
 
     public void addTab(String tag, View tabMenuContent, Class<Fragment> fragment) {
@@ -129,6 +135,7 @@ public class BaseTabBarActivity extends FragmentActivity implements TabHost.OnTa
         mlastTabView = mTabHost.getCurrentTabView();
         mTabHost.setOnTabChangedListener(this);
         setContentView(mTabHost);
+        setTabBackgroundResource(mBackgroundResId);
     }
 
 }

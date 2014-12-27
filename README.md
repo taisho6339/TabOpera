@@ -1,9 +1,8 @@
 TabOpera
-by TaishoSakamoto
 ========
 
 Simple Tab UI Operation Library for Android.
-Tab Operation is very complex in nest of Fragments, so this library simplify.
+Tab Operation is very complex in nest of Fragments, so this library simplify it.
 Each Tab manages Fragment Stack.
 
 Installation

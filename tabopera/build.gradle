@@ -17,7 +17,7 @@ uploadArchives {
             repository url: "file://${projectDir}/repository"
             pom.groupId = 'taisho6339'
             pom.artifactId = 'tab-opera'
-            pom.version = '0.0.1'
+            pom.version = '0.0.2'
         }
     }
 }
